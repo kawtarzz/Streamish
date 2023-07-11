@@ -40,7 +40,7 @@ namespace Streamish.Repositories
                         {
                             var video = new Video()
                             {
-                                Id = DbUtils.GetInt(reader, "Id"),
+                                Id = DbUtils.GetInt(reader, "VideoId"),
                                 Title = DbUtils.GetString(reader, "Title"),
                                 Description = DbUtils.GetString(reader, "Description"),
                                 Url = DbUtils.GetString(reader, "Url"),
@@ -52,12 +52,11 @@ namespace Streamish.Repositories
                                     Name = DbUtils.GetString(reader, "Name"),
                                     Email = DbUtils.GetString(reader, "Email"),
                                     DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                                    ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
                                 },
                             };
-                            if (DbUtils.IsNotDbNull(reader, "ImageUrl"))
+                            if (DbUtils.IsNotDbNull(reader, "UserProfileImageUrl"))
                             {
-                                video.UserProfile.ImageUrl = DbUtils.GetString(reader, "ImageUrl");
+                                video.UserProfile.ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl");
                             }
                             videos.Add(video);
                         }
