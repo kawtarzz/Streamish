@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-
 using Streamish.Models;
+using Streamish.Utils;
+
 
 namespace Streamish.Repositories
 {
@@ -18,12 +18,80 @@ namespace Streamish.Repositories
             _config = config;
         }
 
-        public List<UserProfile> GetAll() { return null; }
+        public List<UserProfile> GetAll() 
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    SELECT 
+                    up.Id, up.[Name], up.Email, up.DateCreated AS UserProfileDateCreated,
+                    up.ImageUrl AS UserProfileImageUrl
+                    FROM UserProfile up 
+                    ORDER BY DateCreated";
 
-        public UserProfile GetUserById(int userId) { return null; }
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        var userProfiles = new List<UserProfile>();
+                        while (reader.Read())
+                        {
+                           var userProfile = new UserProfile()
+                            {
+                                    Id = DbUtils.GetInt(reader, "Id"),
+                                    Name = DbUtils.GetString(reader, "Name"),
+                                    Email = DbUtils.GetString(reader, "Email"),
+                                    DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
+                            };
+                            if (DbUtils.IsNotDbNull(reader, "ImageUrl"))
+                            {
+                                userProfile.ImageUrl = DbUtils.GetString(reader, "ImageUrl");
+                            }
+                        userProfiles.Add(userProfile);
+                        }
+                        return userProfiles;
+                    }
+                }
+            }
+        }
 
+        public UserProfile GetUserById(int Id) 
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    SELECT up.Id, up.Name, up.Email, up.DateCreated AS UserProfileDateCreated,
+                    up.ImageUrl AS UserProfileImageUrl
+                    FROM UserProfile up
+                    WHERE Id = @Id";
 
+                    DbUtils.AddParameter(cmd, "@Id", Id);
 
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        UserProfile userProfile = null;
+                        if (reader.Read())
+                        {
+                             userProfile = new UserProfile()
+                            {
+                                    Id = Id,
+                                    Name = DbUtils.GetString(reader, "Name"),
+                                    Email = DbUtils.GetString(reader, "Email"),
+                                    DateCreated = DbUtils.GetDateTime(reader, "DateCreated"),
+                                    ImageUrl = DbUtils.GetString(reader, "ImageUrl")
+                            };
+                           
+                        }
+
+                        return userProfile;
+                    }
+                }
+            }
+        }
 
     }
 }

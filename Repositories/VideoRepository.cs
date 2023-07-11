@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-
 using Streamish.Models;
 using Streamish.Utils;
 
@@ -27,19 +25,20 @@ namespace Streamish.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    SELECT v.Id, v.Title, v.Description, v.Url, v.DateCreated, v.UserProfileId,
+                    SELECT v.Id AS VideoId, v.Title, v.Description, v.Url, v.DateCreated, v.UserProfileId,
                     up.Name, up.Email, up.DateCreated AS UserProfileDateCreated,
                     up.ImageUrl AS UserProfileImageUrl
                     FROM Video v 
                     JOIN UserProfile up ON v.UserProfileId = up.Id
                     ORDER BY DateCreated";
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
                     {
+
                         var videos = new List<Video>();
-                        while (reader.Read())
+                        if (reader.Read())
                         {
-                            videos.Add(new Video()
+                            var video = new Video()
                             {
                                 Id = DbUtils.GetInt(reader, "Id"),
                                 Title = DbUtils.GetString(reader, "Title"),
@@ -55,10 +54,14 @@ namespace Streamish.Repositories
                                     DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
                                     ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
                                 },
-                            });
+                            };
+                            if (DbUtils.IsNotDbNull(reader, "ImageUrl"))
+                            {
+                                video.UserProfile.ImageUrl = DbUtils.GetString(reader, "ImageUrl");
+                            }
+                            videos.Add(video);
                         }
-
-                        return videos;
+                            return videos;
                     }
                 }
             }
@@ -105,7 +108,7 @@ namespace Streamish.Repositories
                                         Name = DbUtils.GetString(reader, "Name"),
                                         Email = DbUtils.GetString(reader, "Email"),
                                         DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                                        ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
+                                        ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl")
                                     },
                                     Comments = new List<Comment>()
                                 };
@@ -134,7 +137,7 @@ namespace Streamish.Repositories
 
         public Video GetById(int id)
         {
-        using (var conn = new SqlConnection())
+        using (var conn = Connection)
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -257,12 +260,12 @@ namespace Streamish.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                          SELECT v.Id AS VideoId, v.Title, v.Description, v.Url, 
-                          v.DateCreated AS VideoDateCreated, 
-                          c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId
-                          FROM Video v 
-                          LEFT JOIN Comment c on c.VideoId = v.id
-                          ORDER BY v.DateCreated";
+                    SELECT v.Id AS VideoId, v.Title, v.Description, v.Url, 
+                    v.DateCreated AS VideoDateCreated, 
+                    c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId
+                    FROM Video v 
+                    LEFT JOIN Comment c on c.VideoId = v.id
+                    ORDER BY v.DateCreated";
 
                     DbUtils.AddParameter(cmd, "@VideoId", videoId);
 
@@ -291,17 +294,11 @@ namespace Streamish.Repositories
                                     UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId")
                                 });
                             }
-
                         }
-
                         return video;
                     }
                 }
             }
         }
-
-
-
-
     }
 }

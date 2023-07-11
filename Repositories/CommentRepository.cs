@@ -27,11 +27,12 @@ namespace Streamish.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT c.Id AS CommentId, 
-                               c.Message, c.UserProfileId, c.VideoId, up.[Name] AS            UserProfileName, up.Id AS UserProfileId, v.Id AS                VideoId, v.Title, v.Description, v.Url, v.DateCreated 
-                               FROM Comment c 
-                               JOIN UserProfile up ON c.UserProfileId = up.Id
-                               JOIN Video v ON c.VideoId = v.Id
-                               ORDER BY DateCreated";
+                               c.Message, c.UserProfileId, c.VideoId, up.[Name] AS UserProfileName, up.Id AS UserProfileId, v.Id AS VideoId, v.Title, v.Description, v.Url, v.DateCreated 
+                     FROM Comment c 
+                    JOIN UserProfile up ON c.UserProfileId = up.Id
+                    JOIN Video v ON c.VideoId = v.Id
+                    ORDER BY DateCreated";
+                    
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         var comments = new List<Comment>();

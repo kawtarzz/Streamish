@@ -1,6 +1,12 @@
-﻿namespace Streamish.Repositories
+﻿using Streamish.Models;
+using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
+
+namespace Streamish.Repositories
 {
-    internal interface ICommentRepository
+    public interface ICommentRepository
     {
+        List<Comment> GetAll();
+
     }
 }
