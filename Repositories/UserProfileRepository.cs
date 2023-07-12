@@ -44,9 +44,9 @@ namespace Streamish.Repositories
                                     Email = DbUtils.GetString(reader, "Email"),
                                     DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
                             };
-                            if (DbUtils.IsNotDbNull(reader, "ImageUrl"))
+                            if (DbUtils.IsNotDbNull(reader, "UserProfileImageUrl"))
                             {
-                                userProfile.ImageUrl = DbUtils.GetString(reader, "ImageUrl");
+                                userProfile.ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl");
                             }
                         userProfiles.Add(userProfile);
                         }
@@ -81,12 +81,13 @@ namespace Streamish.Repositories
                                     Id = Id,
                                     Name = DbUtils.GetString(reader, "Name"),
                                     Email = DbUtils.GetString(reader, "Email"),
-                                    DateCreated = DbUtils.GetDateTime(reader, "DateCreated"),
-                                    ImageUrl = DbUtils.GetString(reader, "ImageUrl")
+                                    DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated")
                             };
-                           
+                            if (DbUtils.IsNotDbNull(reader, "UserProfileImageUrl"))
+                            {
+                                userProfile.ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl");
+                            }
                         }
-
                         return userProfile;
                     }
                 }

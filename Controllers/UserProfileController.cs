@@ -26,9 +26,9 @@ namespace Streamish.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int Id)
+        public IActionResult Get(int id)
         {
-            var userProfile = _userProfileRepository.GetUserById(Id);
+            var userProfile = _userProfileRepository.GetUserById(id);
             if (userProfile ==null)
             {
                 return NotFound();

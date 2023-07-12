@@ -27,7 +27,7 @@ namespace Streamish.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT c.Id AS CommentId, 
-                               c.Message, c.UserProfileId, c.VideoId, up.[Name] AS UserProfileName, up.Id AS UserProfileId, v.Id AS VideoId, v.Title, v.Description, v.Url, v.DateCreated 
+                               c.Message, c.UserProfileId, c.VideoId, up.Name AS UserProfileName, up.Id, v.Id, v.Title, v.Description, v.Url, v.DateCreated 
                      FROM Comment c 
                     JOIN UserProfile up ON c.UserProfileId = up.Id
                     JOIN Video v ON c.VideoId = v.Id
@@ -40,7 +40,7 @@ namespace Streamish.Repositories
                         {
                             comments.Add(new Comment()
                             {
-                                Id = DbUtils.GetInt(reader, "Id"),
+                                Id = DbUtils.GetInt(reader, "CommentId"),
                                 Message = DbUtils.GetString(reader, "Message"),
                                 VideoId = DbUtils.GetInt(reader, "VideoId"),
                                 Video = new Video()
@@ -54,14 +54,13 @@ namespace Streamish.Repositories
                                 UserProfileId = DbUtils.GetInt(reader, "UserProfileId"),
                                 UserProfile = new UserProfile()
                                 {
-                                    Id = DbUtils.GetInt(reader, "UserProfileId"),
-                                    Name = DbUtils.GetString(reader, "Name")
+                                    Id = DbUtils.GetInt(reader, "Id"),
+                                    Name = DbUtils.GetString(reader, "UserProfileName")
                                 }
                             });
                         }
 
                         return comments;
-
                     }
                 }
             }

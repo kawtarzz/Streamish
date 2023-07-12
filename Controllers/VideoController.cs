@@ -32,6 +32,47 @@ namespace Streamish.Controllers
             }
             return Ok(video);
         }
+        //[HttpGet("{searchTerm}")]
+        //public IActionResult GetSearch(string searchTerm)
+        //{
+        //    return Ok(_videoRepository.Search(searchTerm));
+        //}
+
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, Video video)
+        {
+            if (id != video.Id)
+            {
+                return BadRequest();
+            }
+
+            _videoRepository.Update(video);
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _videoRepository.Delete(id);
+            return NoContent();
+        }
+
+        [HttpGet("GetWithComments")]
+        public IActionResult GetWithComments()
+        {
+            var videos = _videoRepository.GetAllWithComments();
+            return Ok(videos);
+        }
+
+        [HttpGet("GetVideoByIdComments")]
+        public IActionResult GetVideoByIdComments(int videoId)
+        {
+            var video = _videoRepository.GetByIdWithComments(videoId);
+            if (video == null)
+            {
+                return NotFound();
+            }
+            return Ok(video);
+        }
 
         [HttpPost]
         public IActionResult Post(Video video)
@@ -82,38 +123,7 @@ namespace Streamish.Controllers
             return CreatedAtAction("Get", new { id = video.Id }, video);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Video video)
-        {
-            if (id != video.Id)
-            {
-                return BadRequest();
-            }
-
-            _videoRepository.Update(video);
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            _videoRepository.Delete(id);
-            return NoContent();
-        }
-
-        [HttpGet("GetWithComments")]
-        public IActionResult GetWithComments()
-        {
-            var videos = _videoRepository.GetAllWithComments();
-            return Ok(videos);
-        }
-
-        [HttpGet("GetVideoByIdWithComments")]
-        public IActionResult GetByIdWithComments(int videoId)
-        {
-            var video = _videoRepository.GetVideoByIdWithComments(videoId);
-            return Ok(video);
-        }
+        
 
 
     }
