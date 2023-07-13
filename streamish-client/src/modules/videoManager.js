@@ -20,12 +20,11 @@ export const addVideo = (video) => {
   });
 };
 
-export const getUserVideos = (id) => {
-  return fetch("/api/userProfile/GetWithVideos/" + id)
+export const getUserVideos = (userId) => {
+  return fetch(`${baseUrl}/userProfile/${userId}/GetWithVideos/`)
     .then((res) => res.json())
 }
 
 export const getVideo = (id) => {
-  return fetch(baseUrl + "/" + id)
-    .then((res) => res.json())
-}
+  return fetch(`${baseUrl}/${id}`).then((res) => res.json());
+};

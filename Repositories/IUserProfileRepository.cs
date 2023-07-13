@@ -8,5 +8,7 @@ namespace Streamish.Repositories
     {
         List<UserProfile> GetAll();
         UserProfile GetUserById(int Id);
+
+        UserProfile GetUserVideosById(int userId);
     }
 }

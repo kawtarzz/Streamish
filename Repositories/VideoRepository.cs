@@ -26,7 +26,7 @@ namespace Streamish.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-               SELECT v.Id, v.Title, v.Description, v.Url, v.DateCreated, v.UserProfileId,
+                SELECT v.Id, v.Title, v.Description, v.Url, v.DateCreated, v.UserProfileId,
                       up.Name, up.Email, up.DateCreated AS UserProfileDateCreated,
                       up.ImageUrl AS UserProfileImageUrl
                  FROM Video v 
@@ -72,8 +72,8 @@ namespace Streamish.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                SELECT v.Id AS videoId, v.Title, v.Description, v.Url, 
-                       v.DateCreated AS VideoDateCreated, v.UserProfileId,
+                    SELECT v.Id AS videoId, v.Title, v.Description, v.Url, 
+                    v.DateCreated AS VideoDateCreated, v.UserProfileId,
                        up.Name, up.Id, up.Email, up.DateCreated AS UserProfileDateCreated,
                        up.ImageUrl AS UserProfileImageUrl,
                        c.Id AS CommentId, c.Message, c.VideoId, c.UserProfileId AS CommentUserProfileId

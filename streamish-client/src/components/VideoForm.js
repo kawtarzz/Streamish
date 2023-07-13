@@ -1,67 +1,60 @@
+import React, { useState } from 'react';
+import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { addVideo } from "../modules/videoManager";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
-export const VideoForm = () => {
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
+const VideoForm = ({ getVideos }) => {
+  const emptyVideo = {
+    title: '',
+    description: '',
+    url: ''
+  };
+
+  const [video, setVideo] = useState(emptyVideo);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleInputChange = (evt) => {
+    const value = evt.target.value;
+    const key = evt.target.id;
 
-    //create new video object with user entered data
-    // send to database as part of POST 
+    const videoCopy = { ...video };
 
-    const newVideo = {
-      title: title,
-      url: url,
-      description: description,
-    };
+    videoCopy[key] = value;
+    setVideo(videoCopy);
+  };
 
-    addVideo(newVideo).then(() => {
-      //reset form fields
-      setTitle("");
-      setUrl("");
-      setDescription("");
-      // navigate home
+  const handleSave = (evt) => {
+    evt.preventDefault();
+
+    addVideo(video).then((p) => {
+      // Navigate the user back to the home route
       navigate("/");
     });
   };
-  return (
-    <div>
-      <h3> Add New Video</h3>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title: </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Url: </label>
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Description: </label>
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </div>
 
-      </form>
-    </div>
-  )
-}
+  return (
+    <Form>
+      <FormGroup>
+        <Label for="title">Title</Label>
+        <Input type="text" name="title" id="title" placeholder="video title"
+          value={video.title}
+          onChange={handleInputChange} />
+      </FormGroup>
+      <FormGroup>
+        <Label for="url">URL</Label>
+        <Input type="text" name="url" id="url" placeholder="video link"
+          value={video.url}
+          onChange={handleInputChange} />
+      </FormGroup>
+      <FormGroup>
+        <Label for="description">Description</Label>
+        <Input type="textarea" name="description" id="description"
+          value={video.description}
+          onChange={handleInputChange} />
+      </FormGroup>
+      <Button className="btn btn-primary" onClick={handleSave}>Submit</Button>
+    </Form>
+  );
+};
+
+export default VideoForm;
